@@ -1,6 +1,6 @@
 ---
 layout: default
-title: * Main
+title: Main
 ---
 
 여기에 본문 내용을 작성하세요. 
