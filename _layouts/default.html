@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <title>{{ page.title }} | The Liminal Archive</title>
     <style>
+        /* --- 1. 변수 및 시스템 컬러 --- */
         :root {
             --win-bg: #008080;
             --win-silver: #c0c0c0;
@@ -21,7 +22,7 @@
             height: 100vh; display: flex; flex-direction: column; overflow: hidden;
         }
 
-        /* --- 시각 효과 --- */
+        /* --- 2. 초현실 효과 (TV 노이즈 & CRT) --- */
         .noise-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: url('https://replicate.delivery/pbxt/J6TzJzG3T6f3ZkX6V5f5JzG3T6f3ZkX6V5f5/noise.png');
@@ -35,22 +36,20 @@
             background-size: 100% 3px; z-index: 10001; pointer-events: none;
         }
 
-        /* --- 바탕화면 아이콘 (휴지통) --- */
+        /* --- 3. 바탕화면 아이콘 (휴지통) --- */
         .desktop {
             position: absolute; top: 20px; left: 20px;
-            display: flex; flex-direction: column; gap: 20px;
-            z-index: 500;
+            display: flex; flex-direction: column; gap: 20px; z-index: 500;
         }
         .icon {
             width: 70px; text-align: center; cursor: pointer; color: white; font-size: 11px;
             text-shadow: 1px 1px 2px black;
         }
         .icon img { width: 32px; height: 32px; margin-bottom: 5px; image-rendering: pixelated; }
-        .icon:hover img { filter: brightness(1.2); }
 
-        /* --- 윈도우 프레임 --- */
+        /* --- 4. 메인 윈도우 프레임 --- */
         .window-frame {
-            width: 90%; max-width: 1000px; margin: 40px auto;
+            width: 90%; max-width: 1000px; margin: 30px auto;
             background: var(--win-silver);
             border: 2px solid; border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
             display: flex; flex-direction: column; box-shadow: 10px 10px 0px rgba(0,0,0,0.3);
@@ -61,12 +60,23 @@
             color: white; padding: 3px 10px; display: flex; justify-content: space-between; align-items: center;
             font-weight: bold; font-size: 14px;
         }
-        .wrapper { display: flex; flex: 1; padding: 5px; gap: 5px; overflow: hidden; }
-        
-        nav.side-bar { width: 180px; background: white; border: 2px inset var(--win-silver); padding: 10px; font-size: 12px; }
-        main.content { flex: 1; background: white; border: 2px inset var(--win-silver); padding: 25px; overflow-y: auto; }
+        .title-bar-controls button {
+            width: 16px; height: 14px; font-size: 9px; padding: 0; background: var(--win-silver);
+            border: 1px solid; border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
+        }
 
-        /* --- 태스크바 & 메뉴 --- */
+        .wrapper { display: flex; flex: 1; padding: 5px; gap: 5px; overflow: hidden; }
+        nav.side-bar { width: 200px; background: white; border: 2px inset var(--win-silver); padding: 10px; font-size: 12px; }
+        nav.side-bar h3 { background: #eee; margin: 0 -10px 10px -10px; padding: 5px 10px; font-size: 11px; border-bottom: 1px solid #ccc; }
+        nav.side-bar ul { list-style: none; padding-left: 10px; margin: 0; }
+        nav.side-bar li::before { content: "📁 "; }
+        nav.side-bar a { color: black; text-decoration: none; }
+        nav.side-bar a:hover { background: #000080; color: white; }
+
+        main.content { flex: 1; background: white; border: 2px inset var(--win-silver); padding: 25px; overflow-y: auto; }
+        h1 { color: var(--scp-red); font-size: 24px; border-bottom: 2px double #ccc; }
+
+        /* --- 5. 태스크바 & 시작 메뉴 --- */
         .taskbar {
             position: fixed; bottom: 0; width: 100%; height: 32px;
             background: var(--win-silver); border-top: 2px solid var(--win-light);
@@ -76,27 +86,34 @@
             display: flex; align-items: center; gap: 5px; padding: 2px 8px; font-weight: bold; font-size: 13px;
             border: 2px solid; border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light); cursor: pointer;
         }
+        .start-btn.active { border-color: var(--win-dark) var(--win-light) var(--win-light) var(--win-dark); background: #e0e0e0; }
+        
         .task-tab {
-            margin-left: 5px; width: 150px; padding: 2px 8px; border: 2px inset var(--win-light);
+            margin-left: 5px; width: 160px; padding: 2px 8px; border: 2px inset var(--win-light);
             font-size: 11px; display: flex; align-items: center; gap: 5px; background: #d0d0d0;
         }
         .status-tray { margin-left: auto; padding: 2px 10px; border: 2px inset var(--win-light); font-size: 12px; }
 
         #start-menu {
-            display: none; position: fixed; bottom: 32px; left: 2px; width: 180px;
+            display: none; position: fixed; bottom: 32px; left: 2px; width: 200px;
             background: var(--win-silver); border: 2px solid; border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
-            z-index: 9001;
+            z-index: 9001; box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
         }
-        .menu-item { padding: 5px 10px; font-size: 12px; cursor: pointer; }
-        .menu-item:hover { background: #000080; color: white; }
+        .start-menu-sidebar {
+            background: linear-gradient(to top, #000080, #1084d0); width: 25px; padding: 5px; color: white;
+            writing-mode: vertical-rl; transform: rotate(180deg); font-weight: bold; text-align: center; font-size: 14px;
+        }
+        .menu-item { padding: 5px 10px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+        .menu-item a { text-decoration: none; color: black; display: flex; align-items: center; gap: 10px; width: 100%; }
+        .menu-item:hover { background: #000080; }
+        .menu-item:hover, .menu-item:hover a { color: white; }
 
-        /* --- 시스템 팝업 (에러 & 휴지통) --- */
+        /* --- 6. 팝업 & 종료 화면 --- */
         .popup {
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 320px; background: var(--win-silver); border: 2px solid;
             border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light); z-index: 11000;
         }
-
         #shutdown-screen {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: black; z-index: 20000; justify-content: center; align-items: center; color: orange; text-align: center;
@@ -116,16 +133,26 @@
 
     <div class="window-frame">
         <div class="title-bar">
-            <span>{{ page.title }} - Explorer</span>
-            <div style="font-size:10px;">[ _ □ X ]</div>
+            <span>C:\WINDOWS\SYSTEM32\LIMINAL_ARCHIVE.EXE</span>
+            <div class="title-bar-controls">
+                <button onclick="showError()">_</button> <button onclick="showError()">□</button> <button onclick="showError()">X</button>
+            </div>
         </div>
         <div class="wrapper">
             <nav class="side-bar">
-                <p><b>Quick Access</b></p>
-                <a href="{{ '/' | relative_url }}">🏠 Home</a><br>
-                <a href="#" class="not-ready">🔒 Restricted</a>
+                <h3>My Computer</h3>
+                <ul>
+                    <li><a href="{{ '/' | relative_url }}">C:/Home</a></li>
+                    <li><a href="#" class="not-ready">C:/Archives</a></li>
+                    <li><a href="/hotline_/records" class="not-ready">C:/Records</a></li>
+                </ul>
+                <h3>Network</h3>
+                <ul>
+                    <li><a href="https://scpko.wikidot.com" target="_blank">External_Wiki</a></li>
+                </ul>
             </nav>
             <main class="content">
+                <h1>{{ page.title }}</h1>
                 {{ content }}
             </main>
         </div>
@@ -143,60 +170,81 @@
     </div>
 
     <div id="start-menu">
-        <div class="menu-item" onclick="location.href='{{ '/' | relative_url }}'">🏠 Home</div>
-        <hr>
-        <div class="menu-item" onclick="shutDown()">💻 Shut Down...</div>
+        <div style="display: flex;">
+            <div class="start-menu-sidebar">Liminal 95</div>
+            <ul style="list-style: none; margin: 0; padding: 2px; flex: 1;">
+                <li class="menu-item"><a href="{{ '/' | relative_url }}"><img src="https://win98icons.alexmeub.com/icons/png/chm-2.png" width="16"> Home</a></li>
+                <li class="menu-item not-ready"><a href="#"><img src="https://win98icons.alexmeub.com/icons/png/directory_open_file_ed-4.png" width="16"> Archive</a></li>
+                <hr>
+                <li class="menu-item" onclick="shutDown()"><img src="https://win98icons.alexmeub.com/icons/png/shut_down_normal-0.png" width="16"> Shut Down...</li>
+            </ul>
+        </div>
     </div>
 
     <div id="trash-popup" class="popup">
-        <div class="title-bar"><span>Recycle Bin</span><button onclick="closeTrash()">X</button></div>
-        <div style="padding: 15px; background: white; margin: 5px; border: 2px inset var(--win-silver); font-size: 12px; min-height: 100px;">
+        <div class="title-bar"><span>Recycle Bin</span><div class="title-bar-controls"><button onclick="closeTrash()">X</button></div></div>
+        <div style="padding: 15px; background: white; margin: 5px; border: 2px inset var(--win-silver); font-size: 12px; min-height: 100px; color: black;">
             <p style="color: red; font-weight: bold;">[RESTORED_FILE_09.LOG]</p>
             <p>"이곳에 버려진 데이터는 사라지지 않습니다. 누군가 당신의 뒤에 서 있습니다. 뒤를 돌아보지 마세요."</p>
         </div>
     </div>
 
     <div id="error-popup" class="popup">
-        <div class="title-bar"><span>System Error</span><button onclick="closeError()">X</button></div>
-        <div style="padding: 20px; display: flex; align-items: center; gap: 10px;">
+        <div class="title-bar"><span>System Error</span><div class="title-bar-controls"><button onclick="closeError()">X</button></div></div>
+        <div style="padding: 20px; display: flex; align-items: center; gap: 15px; background: var(--win-silver);">
             <img src="https://win98icons.alexmeub.com/icons/png/msg_error-0.png" width="32">
-            <p style="font-size:12px;">파일이 손상되었습니다.</p>
+            <p id="error-message" style="margin: 0; font-size: 12px; color: black; font-weight: bold;">접근 권한이 없습니다.</p>
+        </div>
+        <div style="text-align: center; padding-bottom: 10px; background: var(--win-silver);">
+            <button onclick="closeError()" style="padding: 2px 20px; border: 2px solid; border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light); cursor: pointer;">확인</button>
         </div>
     </div>
 
     <div id="shutdown-screen">
         <div>
-            <h1>It is now safe to turn off your computer.</h1>
-            <p style="color: #444;">Microsoft Windows 95</p>
+            <h1 style="color: orange; font-size: 24px;">It is now safe to turn off your computer.</h1>
+            <p style="color: #444; font-size: 14px;">Microsoft Windows 95</p>
         </div>
     </div>
 
     <audio id="error-sound" src="https://www.soundjay.com/buttons/beep-01a.mp3"></audio>
 
     <script>
+        const startMenu = document.getElementById('start-menu');
+        const startBtn = document.querySelector('.start-btn');
+
         function toggleStartMenu(e) {
             e.stopPropagation();
-            const m = document.getElementById('start-menu');
-            m.style.display = m.style.display === 'block' ? 'none' : 'block';
+            if (startMenu.style.display === 'block') {
+                startMenu.style.display = 'none';
+                startBtn.classList.remove('active');
+            } else {
+                startMenu.style.display = 'block';
+                startBtn.classList.add('active');
+            }
         }
 
         function openTrash() { document.getElementById('trash-popup').style.display = 'block'; }
         function closeTrash() { document.getElementById('trash-popup').style.display = 'none'; }
         
-        function showError() { 
+        function showError(msg) { 
+            if(msg) document.getElementById('error-message').innerText = msg;
             document.getElementById('error-popup').style.display = 'block'; 
-            document.getElementById('error-sound').play();
+            document.getElementById('error-sound').play().catch(()=>{});
         }
         function closeError() { document.getElementById('error-popup').style.display = 'none'; }
 
         function shutDown() {
-            if(confirm("시스템을 종료합니까?")) {
+            if(confirm("시스템을 종료하시겠습니까?")) {
                 document.getElementById('shutdown-screen').style.display = 'flex';
                 setTimeout(() => { window.close(); }, 3000);
             }
         }
 
-        window.onclick = () => { document.getElementById('start-menu').style.display = 'none'; };
+        window.onclick = () => { 
+            startMenu.style.display = 'none'; 
+            startBtn.classList.remove('active');
+        };
 
         function updateClock() {
             const n = new Date();
@@ -205,7 +253,7 @@
         setInterval(updateClock, 1000); updateClock();
 
         document.querySelectorAll('.not-ready').forEach(a => {
-            a.onclick = (e) => { e.preventDefault(); showError(); };
+            a.onclick = (e) => { e.preventDefault(); showError("데이터가 손상되었거나 존재하지 않는 차원입니다."); };
         });
     </script>
 </body>
