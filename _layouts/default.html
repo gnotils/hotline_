@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ page.title }} | The Liminal Archive</title>
+    <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+    <style>
+        /* SCP + 드림코어 스타일 핵심 CSS */
+        :root {
+            --scp-red: #901;
+            --dream-bg: #e0e0e0;
+        }
+        body {
+            margin: 0; padding: 0;
+            background: var(--dream-bg) url('https://scpko.wdfiles.com/local--files/component%3Atheme/body_bg.png') repeat-x;
+            font-family: "Nanum Gothic", sans-serif;
+            display: flex; flex-direction: column;
+        }
+        /* 상단 헤더 */
+        header {
+            height: 140px;
+            background: url('https://scpko.wdfiles.com/local--files/component%3Atheme/logo.png') 20px 40px no-repeat;
+            position: relative; border-bottom: 2px solid var(--scp-red);
+        }
+        header h1 {
+            margin-left: 140px; padding-top: 60px;
+            color: #eee; text-shadow: 2px 2px 4px #000;
+        }
+
+        /* 메인 컨테이너 (사이드바 + 본문) */
+        .wrapper {
+            display: flex; width: 100%; max-width: 1200px; margin: 0 auto;
+        }
+
+        /* 사이드바 (SCP 스타일 상자) */
+        nav.side-bar {
+            width: 250px; padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid #000; margin: 20px;
+            border-radius: 8px; box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
+            min-height: 80vh;
+        }
+        nav.side-bar h3 { border-bottom: 1px solid #000; font-size: 14px; }
+        nav.side-bar ul { list-style: none; padding: 0; }
+        nav.side-bar li { margin-bottom: 10px; }
+        nav.side-bar a { color: var(--scp-red); text-decoration: none; font-weight: bold; }
+
+        /* 본문 영역 */
+        main.content {
+            flex: 1; padding: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            margin: 20px 20px 20px 0;
+            border-radius: 4px; box-shadow: 0 0 10px rgba(0,0,0,0.05);
+            backdrop-filter: blur(5px); /* 드림코어 효과 */
+        }
+        h1#page-title { color: var(--scp-red); border-bottom: 1px solid #bbb; }
+        
+        /* 초현실주의 노이즈 효과 */
+        .noise {
+            fixed: top 0; left 0; width: 100%; height: 100%;
+            background: url('https://replicate.delivery/pbxt/J6TzJzG3T6f3ZkX6V5f5JzG3T6f3ZkX6V5f5/noise.png');
+            opacity: 0.05; pointer-events: none; position: fixed; z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <div class="noise"></div>
+    <header>
+        <h1>THE LIMINAL ARCHIVE</h1>
+    </header>
+    <div class="wrapper">
+        <nav class="side-bar">
+            <h3>📂 사이트 메뉴</h3>
+            <ul>
+                <li><a href="{{ '/' | relative_url }}">홈으로</a></li>
+                <li><a href="{{ '/archive' | relative_url }}">아카이브 목록</a></li>
+                <li><a href="{{ '/guide' | relative_url }}">관람 가이드</a></li>
+            </ul>
+            <h3>👁️ 상세 섹션</h3>
+            <ul>
+                <li><a href="/level-0">Level 0</a></li>
+                <li><a href="/level-1">Level 1</a></li>
+            </ul>
+        </nav>
+        <main class="content">
+            <h1 id="page-title">{{ page.title }}</h1>
+            {{ content }}
+        </main>
+    </div>
+</body>
+</html>
