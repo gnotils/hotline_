@@ -8,24 +8,24 @@
     <style>
         /* --- 0. 마우스 포인터 --- */
         /* --- 마우스 포인터 설정 --- */
-        html, body {
-            /* 기본 화살표 포인터 */
-            cursor: url('https://cur.cursors-4u.net/windows/win-1/win1.cur'), auto !important;
+        /* 사이트 전체 기본 커서 */
+        html, body, .window-frame, .desktop {
+            cursor: url('https://win98icons.alexmeub.com/cursors/arrow.png'), auto !important;
         }
         
-        a, button, .start-btn, .icon, .menu-item {
-            /* 링크나 버튼 위에 올라갔을 때의 손가락 포인터 */
-            cursor: url('https://cur.cursors-4u.net/windows/win-1/win8.cur'), pointer !important;
+        /* 클릭 가능한 요소 (링크, 버튼, 아이콘) */
+        a, button, .start-btn, .icon, .menu-item, .title-bar-controls button {
+            cursor: url('https://win98icons.alexmeub.com/cursors/pointer.png'), pointer !important;
         }
         
-        .not-ready, .title-bar-controls button {
-            /* 사용할 수 없는 버튼 위에서의 포인터 (선택 사항) */
-            cursor: url('https://cur.cursors-4u.net/windows/win-1/win1.cur'), not-allowed !important;
+        /* 텍스트 입력 부분 (필요 시) */
+        p, span, h1, h3 {
+            cursor: url('https://win98icons.alexmeub.com/cursors/arrow.png'), auto !important;
         }
         
-        /* 기다리는 중일 때 (셧다운 등) */
-        .waiting {
-            cursor: url('https://cur.cursors-4u.net/windows/win-1/win3.cur'), wait !important;
+        /* 로딩/대기 중일 때 (모래시계) */
+        .waiting, .waiting * {
+            cursor: url('https://win98icons.alexmeub.com/cursors/wait.png'), wait !important;
         }
         /* --- 1. 변수 및 시스템 컬러 --- */
         :root {
@@ -292,14 +292,13 @@
 
         function shutDown() {
             if(confirm("시스템을 종료하시겠습니까?")) {
-                // 화면 전체에 모래시계 포인터 적용
+                // body에 waiting 클래스를 추가해 커서를 모래시계로 변경
                 document.body.classList.add('waiting');
                 
                 setTimeout(() => {
                     document.getElementById('shutdown-screen').style.display = 'flex';
-                    // 3초 뒤 종료 시도
                     setTimeout(() => { window.close(); }, 3000);
-                }, 1000); // 1초 동안 모래시계를 보여줌
+                }, 800); // 0.8초간 모래시계가 보이다가 화면이 꺼짐
             }
         }
 
