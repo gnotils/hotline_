@@ -6,7 +6,6 @@
     <meta charset="UTF-8">
     <title>{{ page.title }} | The Liminal Archive</title>
     <style>
-        /* --- 1. 변수 및 시스템 컬러 --- */
         :root {
             --win-bg: #008080;
             --win-silver: #c0c0c0;
@@ -19,121 +18,88 @@
             margin: 0; padding: 0;
             background-color: var(--win-bg);
             font-family: "Fixedsys", "Nanum Gothic Coding", monospace;
-            height: 100vh;
-            display: flex; flex-direction: column;
-            overflow: hidden; /* 전체 스크롤 방지, 창 내부에서 스크롤 */
+            height: 100vh; display: flex; flex-direction: column; overflow: hidden;
         }
 
-        /* --- 2. 초현실 효과 (TV 노이즈) --- */
+        /* --- 시각 효과 --- */
         .noise-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: url('https://replicate.delivery/pbxt/J6TzJzG3T6f3ZkX6V5f5JzG3T6f3ZkX6V5f5/noise.png');
-            opacity: 0.08; z-index: 10000; pointer-events: none;
-            animation: noise-move 0.2s infinite;
+            opacity: 0.08; z-index: 10000; pointer-events: none; animation: noise-move 0.2s infinite;
         }
-        @keyframes noise-move {
-            0% { transform: translate(0,0); }
-            50% { transform: translate(-1%, 1%); }
-        }
+        @keyframes noise-move { 0% { transform: translate(0,0); } 50% { transform: translate(-1%, 1%); } }
+        
         .crt-lines {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
             background-size: 100% 3px; z-index: 10001; pointer-events: none;
         }
 
-        /* --- 3. 메인 윈도우 프레임 --- */
-        .window-frame {
-            width: 95%; max-width: 1100px;
-            margin: 20px auto;
-            background: var(--win-silver);
-            border: 2px solid;
-            border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
-            display: flex; flex-direction: column;
-            box-shadow: 10px 10px 0px rgba(0,0,0,0.3);
-            flex: 1; margin-bottom: 50px; /* 태스크바 공간 확보 */
+        /* --- 바탕화면 아이콘 (휴지통) --- */
+        .desktop {
+            position: absolute; top: 20px; left: 20px;
+            display: flex; flex-direction: column; gap: 20px;
+            z-index: 500;
         }
+        .icon {
+            width: 70px; text-align: center; cursor: pointer; color: white; font-size: 11px;
+            text-shadow: 1px 1px 2px black;
+        }
+        .icon img { width: 32px; height: 32px; margin-bottom: 5px; image-rendering: pixelated; }
+        .icon:hover img { filter: brightness(1.2); }
 
+        /* --- 윈도우 프레임 --- */
+        .window-frame {
+            width: 90%; max-width: 1000px; margin: 40px auto;
+            background: var(--win-silver);
+            border: 2px solid; border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
+            display: flex; flex-direction: column; box-shadow: 10px 10px 0px rgba(0,0,0,0.3);
+            flex: 1; margin-bottom: 60px; z-index: 1000;
+        }
         .title-bar {
             background: linear-gradient(90deg, #000080, #1084d0);
-            color: white; padding: 3px 10px;
-            display: flex; justify-content: space-between; align-items: center;
+            color: white; padding: 3px 10px; display: flex; justify-content: space-between; align-items: center;
             font-weight: bold; font-size: 14px;
         }
+        .wrapper { display: flex; flex: 1; padding: 5px; gap: 5px; overflow: hidden; }
+        
+        nav.side-bar { width: 180px; background: white; border: 2px inset var(--win-silver); padding: 10px; font-size: 12px; }
+        main.content { flex: 1; background: white; border: 2px inset var(--win-silver); padding: 25px; overflow-y: auto; }
 
-        .title-bar-controls button {
-            width: 16px; height: 14px; font-size: 9px; padding: 0;
-            background: var(--win-silver); border: 1px solid;
-            border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
-        }
-
-        /* --- 4. 내부 레이아웃 --- */
-        .wrapper {
-            display: flex; flex: 1; padding: 5px; gap: 5px; overflow: hidden;
-        }
-
-        nav.side-bar {
-            width: 220px; background: white;
-            border: 2px inset var(--win-silver);
-            padding: 10px; font-size: 13px;
-            overflow-y: auto;
-        }
-        nav.side-bar h3 { background: #eee; margin: 0 -10px 10px -10px; padding: 5px 10px; font-size: 12px; border-bottom: 1px solid #ccc; }
-        nav.side-bar ul { list-style: none; padding-left: 15px; margin: 0; }
-        nav.side-bar li::before { content: "📁 "; }
-        nav.side-bar a { color: black; text-decoration: none; }
-        nav.side-bar a:hover { background: #000080; color: white; }
-
-        main.content {
-            flex: 1; background: white;
-            border: 2px inset var(--win-silver);
-            padding: 30px; overflow-y: auto;
-        }
-        h1 { color: var(--scp-red); font-size: 24px; border-bottom: 2px double #ccc; }
-
-        /* --- 5. 태스크바 및 시작 메뉴 --- */
+        /* --- 태스크바 & 메뉴 --- */
         .taskbar {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            height: 32px; background: var(--win-silver);
-            border-top: 2px solid var(--win-light);
-            display: flex; align-items: center; padding: 2px;
-            z-index: 9000;
+            position: fixed; bottom: 0; width: 100%; height: 32px;
+            background: var(--win-silver); border-top: 2px solid var(--win-light);
+            display: flex; align-items: center; padding: 2px; z-index: 9000;
         }
-
         .start-btn {
-            display: flex; align-items: center; gap: 5px;
-            padding: 2px 8px; font-weight: bold; font-size: 13px;
-            border: 2px solid; border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
-            cursor: pointer;
+            display: flex; align-items: center; gap: 5px; padding: 2px 8px; font-weight: bold; font-size: 13px;
+            border: 2px solid; border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light); cursor: pointer;
         }
-        .start-btn:active, .start-btn.active {
-            border-color: var(--win-dark) var(--win-light) var(--win-light) var(--win-dark);
+        .task-tab {
+            margin-left: 5px; width: 150px; padding: 2px 8px; border: 2px inset var(--win-light);
+            font-size: 11px; display: flex; align-items: center; gap: 5px; background: #d0d0d0;
         }
+        .status-tray { margin-left: auto; padding: 2px 10px; border: 2px inset var(--win-light); font-size: 12px; }
 
         #start-menu {
-            display: none; position: fixed; bottom: 32px; left: 2px;
-            width: 200px; background: var(--win-silver);
-            border: 2px solid; border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
-            z-index: 9001; box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+            display: none; position: fixed; bottom: 32px; left: 2px; width: 180px;
+            background: var(--win-silver); border: 2px solid; border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
+            z-index: 9001;
+        }
+        .menu-item { padding: 5px 10px; font-size: 12px; cursor: pointer; }
+        .menu-item:hover { background: #000080; color: white; }
+
+        /* --- 시스템 팝업 (에러 & 휴지통) --- */
+        .popup {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 320px; background: var(--win-silver); border: 2px solid;
+            border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light); z-index: 11000;
         }
 
-        .start-menu-sidebar {
-            background: linear-gradient(to top, #000080, #1084d0);
-            width: 25px; padding: 5px; color: white;
-            writing-mode: vertical-rl; transform: rotate(180deg);
-            font-weight: bold; text-align: center; font-size: 14px;
-        }
-
-        .menu-item { padding: 5px 10px; display: flex; align-items: center; }
-        .menu-item a { text-decoration: none; color: black; display: flex; align-items: center; gap: 10px; width: 100%; font-size: 12px; }
-        .menu-item:hover { background-color: #000080; }
-        .menu-item:hover a { color: white; }
-
-        /* --- 6. 에러 팝업 --- */
-        #error-popup {
-            display: none; position: fixed; top: 50%; left: 50%;
-            transform: translate(-50%, -50%); width: 300px;
-            z-index: 11000; background: var(--win-silver);
-            border: 2px solid; border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
+        #shutdown-screen {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: black; z-index: 20000; justify-content: center; align-items: center; color: orange; text-align: center;
         }
     </style>
 </head>
@@ -141,30 +107,25 @@
     <div class="noise-overlay"></div>
     <div class="crt-lines"></div>
 
+    <div class="desktop">
+        <div class="icon" onclick="openTrash()">
+            <img src="https://win98icons.alexmeub.com/icons/png/recycle_bin_empty-0.png" alt="Trash">
+            <br>Recycle Bin
+        </div>
+    </div>
+
     <div class="window-frame">
         <div class="title-bar">
-            <span>C:\WINDOWS\SYSTEM32\LIMINAL_ARCHIVE.EXE</span>
-            <div class="title-bar-controls">
-                <button onclick="showError()">_</button> <button onclick="showError()">□</button> <button onclick="showError()">X</button>
-            </div>
+            <span>{{ page.title }} - Explorer</span>
+            <div style="font-size:10px;">[ _ □ X ]</div>
         </div>
-        
         <div class="wrapper">
             <nav class="side-bar">
-                <h3>My Computer</h3>
-                <ul>
-                    <li><a href="{{ '/' | relative_url }}">C:/Home</a></li>
-                    <li><a href="#" class="not-ready">C:/Archives</a></li>
-                    <li><a href="/hotline_/records" class="not-ready">C:/Records</a></li>
-                </ul>
-                <h3>Network</h3>
-                <ul>
-                    <li><a href="https://scpko.wikidot.com" target="_blank">External_Wiki</a></li>
-                </ul>
+                <p><b>Quick Access</b></p>
+                <a href="{{ '/' | relative_url }}">🏠 Home</a><br>
+                <a href="#" class="not-ready">🔒 Restricted</a>
             </nav>
-
             <main class="content">
-                <h1>{{ page.title }}</h1>
                 {{ content }}
             </main>
         </div>
@@ -172,81 +133,79 @@
 
     <div class="taskbar">
         <div class="start-btn" onclick="toggleStartMenu(event)">
-            <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16">
-            Start
+            <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16"> Start
         </div>
+        <div class="task-tab">
+            <img src="https://win98icons.alexmeub.com/icons/png/msie1-2.png" width="14">
+            <span>{{ page.title }}</span>
+        </div>
+        <div class="status-tray" id="clock">00:00</div>
     </div>
 
     <div id="start-menu">
-        <div style="display: flex;">
-            <div class="start-menu-sidebar">Liminal 95</div>
-            <ul style="list-style: none; margin: 0; padding: 2px; flex: 1;">
-                <li class="menu-item"><a href="{{ '/' | relative_url }}"><img src="https://win98icons.alexmeub.com/icons/png/chm-2.png" width="16"> Home</a></li>
-                <li class="menu-item not-ready"><a href="#"><img src="https://win98icons.alexmeub.com/icons/png/directory_open_file_ed-4.png" width="16"> Archive</a></li>
-                <hr>
-                <li class="menu-item not-ready"><a href="#"><img src="https://win98icons.alexmeub.com/icons/png/shut_down_normal-0.png" width="16"> Shut Down...</a></li>
-            </ul>
+        <div class="menu-item" onclick="location.href='{{ '/' | relative_url }}'">🏠 Home</div>
+        <hr>
+        <div class="menu-item" onclick="shutDown()">💻 Shut Down...</div>
+    </div>
+
+    <div id="trash-popup" class="popup">
+        <div class="title-bar"><span>Recycle Bin</span><button onclick="closeTrash()">X</button></div>
+        <div style="padding: 15px; background: white; margin: 5px; border: 2px inset var(--win-silver); font-size: 12px; min-height: 100px;">
+            <p style="color: red; font-weight: bold;">[RESTORED_FILE_09.LOG]</p>
+            <p>"이곳에 버려진 데이터는 사라지지 않습니다. 누군가 당신의 뒤에 서 있습니다. 뒤를 돌아보지 마세요."</p>
         </div>
     </div>
 
-    <div id="error-popup">
-        <div class="title-bar"><span>System Error</span><div class="title-bar-controls"><button onclick="closeError()">X</button></div></div>
-        <div style="padding: 20px; display: flex; align-items: center; gap: 15px;">
+    <div id="error-popup" class="popup">
+        <div class="title-bar"><span>System Error</span><button onclick="closeError()">X</button></div>
+        <div style="padding: 20px; display: flex; align-items: center; gap: 10px;">
             <img src="https://win98icons.alexmeub.com/icons/png/msg_error-0.png" width="32">
-            <p id="error-message" style="margin: 0; font-size: 12px; color: black; font-weight: bold;">접근이 거부되었습니다.</p>
+            <p style="font-size:12px;">파일이 손상되었습니다.</p>
         </div>
-        <div style="text-align: center; padding-bottom: 10px;">
-            <button onclick="closeError()" style="padding: 2px 20px; border: 2px solid; border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light); cursor: pointer;">확인</button>
+    </div>
+
+    <div id="shutdown-screen">
+        <div>
+            <h1>It is now safe to turn off your computer.</h1>
+            <p style="color: #444;">Microsoft Windows 95</p>
         </div>
     </div>
 
     <audio id="error-sound" src="https://www.soundjay.com/buttons/beep-01a.mp3"></audio>
 
     <script>
-        // 시작 메뉴 제어
         function toggleStartMenu(e) {
             e.stopPropagation();
-            const menu = document.getElementById('start-menu');
-            const btn = document.querySelector('.start-btn');
-            if (menu.style.display === 'none' || menu.style.display === '') {
-                menu.style.display = 'block';
-                btn.classList.add('active');
-            } else {
-                menu.style.display = 'none';
-                btn.classList.remove('active');
+            const m = document.getElementById('start-menu');
+            m.style.display = m.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function openTrash() { document.getElementById('trash-popup').style.display = 'block'; }
+        function closeTrash() { document.getElementById('trash-popup').style.display = 'none'; }
+        
+        function showError() { 
+            document.getElementById('error-popup').style.display = 'block'; 
+            document.getElementById('error-sound').play();
+        }
+        function closeError() { document.getElementById('error-popup').style.display = 'none'; }
+
+        function shutDown() {
+            if(confirm("시스템을 종료합니까?")) {
+                document.getElementById('shutdown-screen').style.display = 'flex';
+                setTimeout(() => { window.close(); }, 3000);
             }
         }
 
-        // 에러 팝업 제어
-        function showError(msg) {
-            const popup = document.getElementById('error-popup');
-            const message = document.getElementById('error-message');
-            const sound = document.getElementById('error-sound');
-            if(msg) message.innerText = msg;
-            popup.style.display = 'block';
-            sound.play().catch(() => {});
-        }
+        window.onclick = () => { document.getElementById('start-menu').style.display = 'none'; };
 
-        function closeError() {
-            document.getElementById('error-popup').style.display = 'none';
+        function updateClock() {
+            const n = new Date();
+            document.getElementById('clock').innerText = n.getHours().toString().padStart(2,'0') + ":" + n.getMinutes().toString().padStart(2,'0');
         }
+        setInterval(updateClock, 1000); updateClock();
 
-        // 전역 클릭 이벤트 (메뉴 닫기)
-        window.onclick = function(e) {
-            const menu = document.getElementById('start-menu');
-            const btn = document.querySelector('.start-btn');
-            if (!btn.contains(e.target) && !menu.contains(e.target)) {
-                menu.style.display = 'none';
-                btn.classList.remove('active');
-            }
-        }
-
-        // 'not-ready' 클래스 링크 클릭 시 에러 띄우기
-        document.querySelectorAll('.not-ready').forEach(link => {
-            link.onclick = function(e) {
-                e.preventDefault();
-                showError("데이터가 손상되었거나 접근 권한이 없습니다.");
-            };
+        document.querySelectorAll('.not-ready').forEach(a => {
+            a.onclick = (e) => { e.preventDefault(); showError(); };
         });
     </script>
 </body>
