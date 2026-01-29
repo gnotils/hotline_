@@ -121,6 +121,14 @@
             <nav class="side-bar">
                 <h3>My Computer</h3>
                 <ul>
+                    <li><a href="/">C:/Home</a></li>
+                    <li><a href="#" class="not-ready">C:/Unknown_Data</a></li>
+                    <li><a href="#" class="not-ready">C:/System_Secret</a></li>
+                </ul>
+            </nav>
+            <nav class="side-bar">
+                <h3>My Computer</h3>
+                <ul>
                     <li><a href="{{ '/' | relative_url }}">C:/Home</a></li>
                     <li><a href="/hotline/archive">C:/Archives</a></li>
                     <li><a href="/hotline/records">C:/Records</a></li>
@@ -144,5 +152,46 @@
             Start
         </div>
     </div>
+    <div id="error-popup" class="window-frame shadow" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; z-index: 2000;">
+    <div class="title-bar">
+        <span>System Error</span>
+        <div class="title-bar-controls">
+            <button onclick="closeError()">X</button>
+        </div>
+    </div>
+    <div style="padding: 20px; display: flex; align-items: center; gap: 15px; background: var(--win-silver);">
+        <img src="https://win98icons.alexmeub.com/icons/png/msg_error-0.png" width="32">
+        <p id="error-message" style="margin: 0; font-size: 12px; color: black; font-weight: bold;">해당 섹션은 현재 접근이 불가능합니다.</p>
+    </div>
+    <div style="text-align: center; padding-bottom: 10px; background: var(--win-silver);">
+        <button onclick="closeError()" style="padding: 5px 20px; border: 2px solid; border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light); background: var(--win-silver); cursor: pointer;">확인</button>
+    </div>
+</div>
+
+<audio id="error-sound" src="https://www.soundjay.com/buttons/beep-01a.mp3"></audio>
+    <script>
+    function showError(msg) {
+        const popup = document.getElementById('error-popup');
+        const message = document.getElementById('error-message');
+        const sound = document.getElementById('error-sound');
+
+        if(msg) message.innerText = msg;
+        
+        popup.style.display = 'block';
+        sound.play().catch(e => console.log("Sound played")); // 브라우저 정책상 첫 클릭 후 소리남
+    }
+
+    function closeError() {
+        document.getElementById('error-popup').style.display = 'none';
+    }
+
+    // "준비 중"인 링크들에 이벤트 연결
+    document.querySelectorAll('.not-ready').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            showError("오류: 데이터가 손상되었거나 존재하지 않는 차원입니다.");
+        });
+    });
+</script>
 </body>
 </html>
