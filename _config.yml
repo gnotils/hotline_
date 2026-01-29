@@ -1,0 +1,5 @@
+title: The Liminal Archive
+baseurl: "/hotline" # 저장소 이름이 hotline인 경우
+url: "https://gnotils.github.io"
+markdown: kramdown
+# 테마 관련 설정 모두 삭제
