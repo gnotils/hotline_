@@ -1,248 +1,171 @@
+---
+# 이 부분(Front Matter)은 꼭 파일 맨 위에 있어야 합니다.
+---
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>{{ page.title }} | The Liminal Archive</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title }} | {{ site.title }}</title>
     <style>
-        /* --- 1. 윈도우 레트로 시스템 컬러 --- */
         :root {
-            --win-bg: #008080; /* 윈도우 95 특유의 청록색 배경 */
+            --win-bg: #008080;
             --win-silver: #c0c0c0;
             --win-dark: #808080;
             --win-light: #ffffff;
-            --scp-red: #901;
         }
 
         body {
             margin: 0; padding: 0;
             background-color: var(--win-bg);
             font-family: "Fixedsys", "Nanum Gothic Coding", monospace;
-            overflow-x: hidden;
-            height: 100vh;
+            height: 100vh; overflow: hidden;
             display: flex; flex-direction: column;
         }
 
-        /* --- 2. 초현실/TV 효과 오버레이 --- */
-        .noise-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: url('https://replicate.delivery/pbxt/J6TzJzG3T6f3ZkX6V5f5JzG3T6f3ZkX6V5f5/noise.png');
-            opacity: 0.08; z-index: 1000; pointer-events: none;
-            animation: noise-move 0.2s infinite;
-        }
-        @keyframes noise-move {
-            0% { transform: translate(0,0); }
-            50% { transform: translate(-1%, 1%); }
-        }
-        .crt-lines {
+        /* TV 노이즈 및 CRT 효과 */
+        .crt-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
-            background-size: 100% 3px; z-index: 1001; pointer-events: none;
+            background-size: 100% 3px; z-index: 9999; pointer-events: none;
         }
 
-        /* --- 3. 윈도우 스타일 프레임 --- */
+        /* 윈도우 본체 */
         .window-frame {
-            width: 95%; max-width: 1100px;
-            margin: 20px auto;
+            width: 95%; max-width: 1000px; margin: 20px auto;
             background: var(--win-silver);
-            border: 2px solid;
-            border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
-            padding: 2px;
-            display: flex; flex-direction: column;
-            box-shadow: 10px 10px 0px rgba(0,0,0,0.3);
+            border: 2px solid; border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
+            display: flex; flex-direction: column; flex-grow: 1; margin-bottom: 50px;
         }
 
-        /* 타이틀 바 */
         .title-bar {
             background: linear-gradient(90deg, #000080, #1084d0);
-            color: white; padding: 3px 10px;
-            display: flex; justify-content: space-between; align-items: center;
-            font-weight: bold; font-size: 14px;
-        }
-        .title-bar-controls button {
-            width: 16px; height: 14px; font-size: 9px; padding: 0;
-            background: var(--win-silver); border: 1px solid;
-            border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
+            color: white; padding: 3px 10px; display: flex; justify-content: space-between;
         }
 
-        /* 컨텐츠 래퍼 (사이드바 + 메인) */
-        .wrapper {
-            display: flex; padding: 5px; gap: 5px;
-            background: var(--win-silver);
-        }
+        .wrapper { display: flex; flex-grow: 1; padding: 5px; gap: 5px; height: 100%; overflow: hidden; }
 
-        /* 사이드바 (폴더 목록 느낌) */
+        /* 사이드바 */
         nav.side-bar {
-            width: 220px; background: white;
-            border: 2px inset var(--win-silver);
+            width: 200px; background: white; border: 2px inset var(--win-silver);
             padding: 10px; font-size: 13px;
         }
-        nav.side-bar h3 { background: #eee; margin: 0 -10px 10px -10px; padding: 5px 10px; font-size: 12px; border-bottom: 1px solid #ccc; }
-        nav.side-bar ul { list-style: none; padding-left: 15px; }
-        nav.side-bar li::before { content: "📁 "; }
-        nav.side-bar a { color: black; text-decoration: none; }
-        nav.side-bar a:hover { background: #000080; color: white; }
+        nav.side-bar ul { list-style: none; padding: 0; margin: 0; }
+        nav.side-bar li { margin-bottom: 8px; }
+        nav.side-bar a { color: black; text-decoration: none; display: flex; align-items: center; gap: 5px; }
 
-        /* 본문 내용 */
+        /* 본문 */
         main.content {
-            flex: 1; background: white;
-            border: 2px inset var(--win-silver);
-            padding: 30px; min-height: 500px;
-            overflow-y: auto;
+            flex-grow: 1; background: white; border: 2px inset var(--win-silver);
+            padding: 20px; overflow-y: auto;
         }
-        h1 { color: var(--scp-red); font-size: 24px; border-bottom: 2px double #ccc; }
 
-        /* 하단 태스크바 */
+        /* 태스크바 (Fixed) */
         .taskbar {
-            <div class="taskbar">
-                <div class="start-btn" onclick="toggleStartMenu()">
-                    <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16">
-                    Start
-                </div>
-            
-                <div id="start-menu" class="window-frame shadow" style="display:none; position: absolute; bottom: 30px; left: 2px; width: 200px; z-index: 3000;">
-                    <div style="display: flex; background: var(--win-silver);">
-                        <div style="background: linear-gradient(to top, #000080, #1084d0); width: 25px; padding: 5px; color: white; writing-mode: vertical-rl; transform: rotate(180deg); font-weight: bold; text-align: center;">
-                            Liminal 95
-                        </div>
-                        <ul style="list-style: none; margin: 0; padding: 5px; flex: 1; font-size: 12px; color: black;">
-                            <li class="menu-item"><a href="/"><img src="https://win98icons.alexmeub.com/icons/png/chm-2.png" width="16"> Home</a></li>
-                            <li class="menu-item"><a href="/archive"><img src="https://win98icons.alexmeub.com/icons/png/directory_open_file_ed-4.png" width="16"> Archive</a></li>
-                            <li class="menu-item not-ready"><a href="#"><img src="https://win98icons.alexmeub.com/icons/png/console_prompt-0.png" width="16"> Run...</a></li>
-                            <hr>
-                            <li class="menu-item not-ready"><a href="#"><img src="https://win98icons.alexmeub.com/icons/png/shut_down_normal-0.png" width="16"> Shut Down...</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 32px;
+            background: var(--win-silver); border-top: 2px solid var(--win-light);
+            display: flex; align-items: center; padding: 2px; z-index: 9000;
         }
+
         .start-btn {
-            font-weight: bold; padding: 2px 8px;
+            display: flex; align-items: center; gap: 5px; padding: 2px 8px;
             border: 2px solid; border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
-            display: flex; align-items: center; gap: 5px; cursor: pointer;
+            font-weight: bold; cursor: pointer; font-size: 13px;
         }
-            /* ------ Menu 효과 ------ */
-            .menu-item {
-                padding: 5px 10px;
-                display: flex;
-                align-items: center;
-            }
-            .menu-item a {
-                text-decoration: none;
-                color: black;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                width: 100%;
-            }
-            .menu-item:hover {
-                background-color: #000080;
-            }
-            .menu-item:hover a {
-                color: white;
-            }
-            .menu-item img {
-                image-rendering: pixelated; /* 도트 아이콘 느낌 살리기 */
-            }
+        .start-btn:active { border-color: var(--win-dark) var(--win-light) var(--win-light) var(--win-dark); }
+
+        /* 시작 메뉴 (Popup) */
+        #start-menu {
+            display: none; position: absolute; bottom: 32px; left: 2px;
+            width: 200px; background: var(--win-silver); border: 2px solid;
+            border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
+            z-index: 9001;
+        }
+        .menu-list { list-style: none; padding: 2px; margin: 0; }
+        .menu-item a { display: flex; align-items: center; gap: 10px; padding: 5px 10px; text-decoration: none; color: black; font-size: 12px; }
+        .menu-item:hover { background: #000080; }
+        .menu-item:hover a { color: white; }
+
+        /* 에러 팝업 */
+        #error-popup {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 300px; background: var(--win-silver); border: 2px solid;
+            border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
+            z-index: 10000; box-shadow: 5px 5px 0 rgba(0,0,0,0.2);
+        }
     </style>
 </head>
 <body>
-    <div class="noise-overlay"></div>
-    <div class="crt-lines"></div>
+    <div class="crt-overlay"></div>
 
     <div class="window-frame">
         <div class="title-bar">
-            <span>C:\WINDOWS\SYSTEM32\LIMINAL_ARCHIVE.EXE</span>
-            <div class="title-bar-controls">
-                <button>_</button> <button>□</button> <button>X</button>
-            </div>
+            <span>C:\WINDOWS\SYSTEM32\LIMINAL.EXE</span>
+            <div><button onclick="showError()">X</button></div>
         </div>
-        
         <div class="wrapper">
             <nav class="side-bar">
-                <h3>My Computer</h3>
                 <ul>
-                    <li><a href="{{ '/' | relative_url }}">C:/Home</a></li>
-                    <li><a href="#" class="not-ready">C:/Archives</a></li>
-                    <li><a href="/hotline_/records">C:/Records</a></li>
-                </ul>
-                <h3>Network</h3>
-                <ul>
-                    <li><a href="https://scpko.wikidot.com">External_Wiki</a></li>
+                    <li><a href="{{ '/' | relative_url }}"><img src="https://win98icons.alexmeub.com/icons/png/chm-2.png" width="16"> Home</a></li>
+                    <li><a href="#" class="not-ready"><img src="https://win98icons.alexmeub.com/icons/png/directory_closed-0.png" width="16"> Secret</a></li>
                 </ul>
             </nav>
-
             <main class="content">
-                <h1>{{ page.title }}</h1>
                 {{ content }}
             </main>
         </div>
     </div>
 
     <div class="taskbar">
-        <div class="start-btn">
-            <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16">
-            Start
+        <div class="start-btn" id="start-btn-trigger">
+            <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16"> Start
         </div>
     </div>
-    <div id="error-popup" class="window-frame shadow" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; z-index: 2000;">
-    <div class="title-bar">
-        <span>System Error</span>
-        <div class="title-bar-controls">
-            <button onclick="closeError()">X</button>
-        </div>
-    </div>
-    <div style="padding: 20px; display: flex; align-items: center; gap: 15px; background: var(--win-silver);">
-        <img src="https://win98icons.alexmeub.com/icons/png/msg_error-0.png" width="32">
-        <p id="error-message" style="margin: 0; font-size: 12px; color: black; font-weight: bold;">해당 섹션은 현재 접근이 불가능합니다.</p>
-    </div>
-    <div style="text-align: center; padding-bottom: 10px; background: var(--win-silver);">
-        <button onclick="closeError()" style="padding: 5px 20px; border: 2px solid; border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light); background: var(--win-silver); cursor: pointer;">확인</button>
-    </div>
-</div>
 
-<audio id="error-sound" src="https://www.soundjay.com/buttons/beep-01a.mp3"></audio>
+    <div id="start-menu">
+        <ul class="menu-list">
+            <li class="menu-item"><a href="{{ '/' | relative_url }}"><img src="https://win98icons.alexmeub.com/icons/png/chm-2.png" width="16"> Home (Return)</a></li>
+            <li class="menu-item not-ready"><a href="#"><img src="https://win98icons.alexmeub.com/icons/png/shut_down_normal-0.png" width="16"> Log Off</a></li>
+        </ul>
+    </div>
+
+    <div id="error-popup">
+        <div class="title-bar"><span>System Error</span></div>
+        <div style="padding: 20px; display: flex; align-items: center; gap: 10px;">
+            <img src="https://win98icons.alexmeub.com/icons/png/msg_error-0.png" width="32">
+            <p style="margin:0; font-size:12px;">접근이 거부되었습니다.</p>
+        </div>
+        <div style="text-align:center; padding-bottom:10px;">
+            <button onclick="document.getElementById('error-popup').style.display='none'">확인</button>
+        </div>
+    </div>
+
     <script>
-    function showError(msg) {
-        const popup = document.getElementById('error-popup');
-        const message = document.getElementById('error-message');
-        const sound = document.getElementById('error-sound');
+        const startBtn = document.getElementById('start-btn-trigger');
+        const startMenu = document.getElementById('start-menu');
 
-        if(msg) message.innerText = msg;
-        
-        popup.style.display = 'block';
-        sound.play().catch(e => console.log("Sound played")); // 브라우저 정책상 첫 클릭 후 소리남
-    }
+        // 시작 메뉴 토글
+        startBtn.onclick = (e) => {
+            e.stopPropagation();
+            startMenu.style.display = startMenu.style.display === 'block' ? 'none' : 'block';
+        };
 
-    function closeError() {
-        document.getElementById('error-popup').style.display = 'none';
-    }
+        // 바깥 클릭 시 닫기
+        window.onclick = () => {
+            startMenu.style.display = 'none';
+        };
 
-    // "준비 중"인 링크들에 이벤트 연결
-    document.querySelectorAll('.not-ready').forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            showError("오류: 데이터가 손상되었거나 존재하지 않는 차원입니다.");
+        // 준비 안 된 링크 에러 팝업
+        document.querySelectorAll('.not-ready').forEach(el => {
+            el.onclick = (e) => {
+                e.preventDefault();
+                document.getElementById('error-popup').style.display = 'block';
+            };
         });
-    });
-    // *토글 효과
-    function toggleStartMenu() {
-    const menu = document.getElementById('start-menu');
-    if (menu.style.display === 'none') {
-        menu.style.display = 'block';
-    } else {
-        menu.style.display = 'none';
-    }
-}
 
-    // 메뉴 바깥 클릭 시 닫기
-    window.addEventListener('click', function(e) {
-        const menu = document.getElementById('start-menu');
-        const startBtn = document.querySelector('.start-btn');
-        
-        if (!startBtn.contains(e.target) && !menu.contains(e.target)) {
-            menu.style.display = 'none';
+        function showError() {
+            document.getElementById('error-popup').style.display = 'block';
         }
-    });
-</script>
+    </script>
 </body>
 </html>
