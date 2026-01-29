@@ -4,8 +4,29 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>{{ page.title }} | The Liminal Archive</title>
+    <title>{{ page.title }} | Lableue_Archive</title>
     <style>
+        /* --- 0. 마우스 포인터 --- */
+        /* --- 마우스 포인터 설정 --- */
+        html, body {
+            /* 기본 화살표 포인터 */
+            cursor: url('https://cur.cursors-4u.net/windows/win-1/win1.cur'), auto !important;
+        }
+        
+        a, button, .start-btn, .icon, .menu-item {
+            /* 링크나 버튼 위에 올라갔을 때의 손가락 포인터 */
+            cursor: url('https://cur.cursors-4u.net/windows/win-1/win8.cur'), pointer !important;
+        }
+        
+        .not-ready, .title-bar-controls button {
+            /* 사용할 수 없는 버튼 위에서의 포인터 (선택 사항) */
+            cursor: url('https://cur.cursors-4u.net/windows/win-1/win1.cur'), not-allowed !important;
+        }
+        
+        /* 기다리는 중일 때 (셧다운 등) */
+        .waiting {
+            cursor: url('https://cur.cursors-4u.net/windows/win-1/win3.cur'), wait !important;
+        }
         /* --- 1. 변수 및 시스템 컬러 --- */
         :root {
             --win-bg: #008080;
@@ -270,8 +291,14 @@
 
         function shutDown() {
             if(confirm("시스템을 종료하시겠습니까?")) {
-                document.getElementById('shutdown-screen').style.display = 'flex';
-                setTimeout(() => { window.close(); }, 3000);
+                // 화면 전체에 모래시계 포인터 적용
+                document.body.classList.add('waiting');
+                
+                setTimeout(() => {
+                    document.getElementById('shutdown-screen').style.display = 'flex';
+                    // 3초 뒤 종료 시도
+                    setTimeout(() => { window.close(); }, 3000);
+                }, 1000); // 1초 동안 모래시계를 보여줌
             }
         }
 
