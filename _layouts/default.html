@@ -93,16 +93,56 @@
 
         /* 하단 태스크바 */
         .taskbar {
-            position: fixed; bottom: 0; width: 100%;
-            height: 30px; background: var(--win-silver);
-            border-top: 2px solid var(--win-light);
-            display: flex; align-items: center; padding: 2px 5px; z-index: 1002;
+            <div class="taskbar">
+                <div class="start-btn" onclick="toggleStartMenu()">
+                    <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16">
+                    Start
+                </div>
+            
+                <div id="start-menu" class="window-frame shadow" style="display:none; position: absolute; bottom: 30px; left: 2px; width: 200px; z-index: 3000;">
+                    <div style="display: flex; background: var(--win-silver);">
+                        <div style="background: linear-gradient(to top, #000080, #1084d0); width: 25px; padding: 5px; color: white; writing-mode: vertical-rl; transform: rotate(180deg); font-weight: bold; text-align: center;">
+                            Liminal 95
+                        </div>
+                        <ul style="list-style: none; margin: 0; padding: 5px; flex: 1; font-size: 12px; color: black;">
+                            <li class="menu-item"><a href="/"><img src="https://win98icons.alexmeub.com/icons/png/chm-2.png" width="16"> Home</a></li>
+                            <li class="menu-item"><a href="/archive"><img src="https://win98icons.alexmeub.com/icons/png/directory_open_file_ed-4.png" width="16"> Archive</a></li>
+                            <li class="menu-item not-ready"><a href="#"><img src="https://win98icons.alexmeub.com/icons/png/console_prompt-0.png" width="16"> Run...</a></li>
+                            <hr>
+                            <li class="menu-item not-ready"><a href="#"><img src="https://win98icons.alexmeub.com/icons/png/shut_down_normal-0.png" width="16"> Shut Down...</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         }
         .start-btn {
             font-weight: bold; padding: 2px 8px;
             border: 2px solid; border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
             display: flex; align-items: center; gap: 5px; cursor: pointer;
         }
+            /* ------ Menu 효과 ------ */
+            .menu-item {
+                padding: 5px 10px;
+                display: flex;
+                align-items: center;
+            }
+            .menu-item a {
+                text-decoration: none;
+                color: black;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                width: 100%;
+            }
+            .menu-item:hover {
+                background-color: #000080;
+            }
+            .menu-item:hover a {
+                color: white;
+            }
+            .menu-item img {
+                image-rendering: pixelated; /* 도트 아이콘 느낌 살리기 */
+            }
     </style>
 </head>
 <body>
@@ -183,6 +223,25 @@
             e.preventDefault();
             showError("오류: 데이터가 손상되었거나 존재하지 않는 차원입니다.");
         });
+    });
+    // *토글 효과
+    function toggleStartMenu() {
+    const menu = document.getElementById('start-menu');
+    if (menu.style.display === 'none') {
+        menu.style.display = 'block';
+    } else {
+        menu.style.display = 'none';
+    }
+}
+
+    // 메뉴 바깥 클릭 시 닫기
+    window.addEventListener('click', function(e) {
+        const menu = document.getElementById('start-menu');
+        const startBtn = document.querySelector('.start-btn');
+        
+        if (!startBtn.contains(e.target) && !menu.contains(e.target)) {
+            menu.style.display = 'none';
+        }
     });
 </script>
 </body>
