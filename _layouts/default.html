@@ -6,27 +6,7 @@
     <meta charset="UTF-8">
     <title>{{ page.title }} | Lableue_Archive</title>
     <style>
-        /* --- 0. 마우스 포인터 --- */
-        /* --- 마우스 포인터 설정 --- */
-        /* 사이트 전체 기본 커서 */
-        html, body, .window-frame, .desktop {
-            cursor: url('https://win98icons.alexmeub.com/cursors/arrow.png'), auto !important;
-        }
         
-        /* 클릭 가능한 요소 (링크, 버튼, 아이콘) */
-        a, button, .start-btn, .icon, .menu-item, .title-bar-controls button {
-            cursor: url('https://win98icons.alexmeub.com/cursors/pointer.png'), pointer !important;
-        }
-        
-        /* 텍스트 입력 부분 (필요 시) */
-        p, span, h1, h3 {
-            cursor: url('https://win98icons.alexmeub.com/cursors/arrow.png'), auto !important;
-        }
-        
-        /* 로딩/대기 중일 때 (모래시계) */
-        .waiting, .waiting * {
-            cursor: url('https://win98icons.alexmeub.com/cursors/wait.png'), wait !important;
-        }
         /* --- 1. 변수 및 시스템 컬러 --- */
         :root {
             --win-bg: #008080;
@@ -138,6 +118,27 @@
         #shutdown-screen {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: black; z-index: 20000; justify-content: center; align-items: center; color: orange; text-align: center;
+        }
+        /* --- 0. 마우스 포인터 --- */
+        /* --- 마우스 포인터 설정 --- */
+        /* 사이트 전체 기본 커서 */
+        html, body, .window-frame, .desktop {
+            cursor: url('https://win98icons.alexmeub.com/cursors/arrow.png'), auto !important;
+        }
+        
+        /* 클릭 가능한 요소 (링크, 버튼, 아이콘) */
+        a, button, .start-btn, .icon, .menu-item, .title-bar-controls button {
+            cursor: url('https://win98icons.alexmeub.com/cursors/pointer.png'), pointer !important;
+        }
+        
+        /* 텍스트 입력 부분 (필요 시) */
+        p, span, h1, h3 {
+            cursor: url('https://win98icons.alexmeub.com/cursors/arrow.png'), auto !important;
+        }
+        
+        /* 로딩/대기 중일 때 (모래시계) */
+        .waiting, .waiting * {
+            cursor: url('https://win98icons.alexmeub.com/cursors/wait.png'), wait !important;
         }
     </style>
 </head>
