@@ -1,6 +1,6 @@
 ---
 layout: default
-title: 메인 페이지
+title: * Main
 ---
 
 여기에 본문 내용을 작성하세요. 
