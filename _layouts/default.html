@@ -207,7 +207,7 @@
         </div>
     </div>
 
-    <audio id="error-sound" src="https://www.soundjay.com/buttons/beep-01a.mp3"></audio>
+    <audio id="error-sound" src="https://raw.githubusercontent.com/fevrcr/win98-icons/main/audio/chord.mp3" preload="auto"></audio>
 
     <script>
         const startMenu = document.getElementById('start-menu');
@@ -227,11 +227,33 @@
         function openTrash() { document.getElementById('trash-popup').style.display = 'block'; }
         function closeTrash() { document.getElementById('trash-popup').style.display = 'none'; }
         
-        function showError(msg) { 
-            if(msg) document.getElementById('error-message').innerText = msg;
-            document.getElementById('error-popup').style.display = 'block'; 
-            document.getElementById('error-sound').play().catch(()=>{});
+        // 브라우저의 '자동 재생 차단'을 풀기 위해 첫 클릭 시 오디오를 준비시킵니다.
+        window.addEventListener('click', function() {
+            const sound = document.getElementById('error-sound');
+            // 소리 없이 한 번 재생시켜 브라우저 권한을 획득합니다.
+            sound.muted = true;
+            sound.play().then(() => {
+                sound.pause();
+                sound.muted = false;
+            }).catch(e => console.log("Audio prep failed"));
+        }, { once: true }); // 딱 한 번만 실행
+
+    function showError(msg) {
+        const popup = document.getElementById('error-popup');
+        const message = document.getElementById('error-message');
+        const sound = document.getElementById('error-sound');
+
+        if(msg) message.innerText = msg;
+        popup.style.display = 'block';
+
+        // 2. 소리 재생 부분 보정
+        if (sound) {
+            sound.currentTime = 0; // 재생 위치를 처음으로
+            sound.play().catch(e => {
+                console.log("사용자 상호작용이 필요합니다.");
+            });
         }
+    }
         function closeError() { document.getElementById('error-popup').style.display = 'none'; }
 
         function shutDown() {
