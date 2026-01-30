@@ -1,111 +1,141 @@
+---
+---
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Liminal OS 95</title>
+    <title>{{ page.title }} | Lableue_Archive</title>
     <style>
-        /* 기본 변수 및 스타일 (이전과 동일) */
-        :root { --win-bg: #008080; --win-silver: #c0c0c0; --win-dark: #808080; --win-light: #ffffff; }
-        body { margin: 0; background: var(--win-bg); font-family: "Fixedsys", monospace; height: 100vh; overflow: hidden; }
+        :root {
+            --win-bg: #008080; --win-silver: #c0c0c0;
+            --win-dark: #808080; --win-light: #ffffff; --scp-red: #901;
+        }
 
-        /* 커서 설정 */
-        html, body { cursor: url('https://win98icons.alexmeub.com/cursors/arrow.png'), auto !important; }
-        button, .start-btn, .icon, .task-tab { cursor: url('https://win98icons.alexmeub.com/cursors/pointer.png'), pointer !important; }
+        /* 기본 설정 및 커서 */
+        body {
+            margin: 0; padding: 0; background-color: var(--win-bg);
+            font-family: "Fixedsys", "Nanum Gothic Coding", monospace;
+            height: 100vh; overflow: hidden;
+            cursor: url('https://win98icons.alexmeub.com/cursors/arrow.png'), auto !important;
+        }
+        a, button, .start-btn, .icon, .task-tab { cursor: url('https://win98icons.alexmeub.com/cursors/pointer.png'), pointer !important; }
+        .waiting { cursor: url('https://win98icons.alexmeub.com/cursors/wait.png'), wait !important; }
 
-        /* 바탕화면 */
-        .desktop { position: relative; width: 100%; height: calc(100vh - 32px); padding: 20px; box-sizing: border-box; }
-        .icon { width: 70px; text-align: center; color: white; font-size: 11px; margin-bottom: 20px; text-shadow: 1px 1px 1px black; }
-        .icon img { width: 32px; image-rendering: pixelated; }
+        /* 초현실 효과 */
+        .noise-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('https://replicate.delivery/pbxt/J6TzJzG3T6f3ZkX6V5f5JzG3T6f3ZkX6V5f5/noise.png'); opacity: 0.08; z-index: 20000; pointer-events: none; animation: noise-move 0.2s infinite; }
+        @keyframes noise-move { 0% { transform: translate(0,0); } 50% { transform: translate(-1%, 1%); } }
+        .crt-lines { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%); background-size: 100% 3px; z-index: 20001; pointer-events: none; }
 
-        /* 동적 윈도우 프레임 */
+        /* 바탕화면 및 아이콘 */
+        .desktop { position: relative; width: 100%; height: calc(100vh - 32px); padding: 20px; z-index: 100; }
+        .icon { width: 75px; text-align: center; color: white; font-size: 11px; text-shadow: 1px 1px 2px black; margin-bottom: 20px; }
+        .icon img { width: 32px; height: 32px; image-rendering: pixelated; margin-bottom: 5px; }
+
+        /* 동적 윈도우 스타일 */
         .window {
             position: absolute; background: var(--win-silver);
             border: 2px solid; border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
-            display: flex; flex-direction: column; min-width: 300px; min-height: 200px;
-            box-shadow: 4px 4px 10px rgba(0,0,0,0.3);
+            display: flex; flex-direction: column; min-width: 400px; box-shadow: 4px 4px 10px rgba(0,0,0,0.3);
+            z-index: 500;
         }
-        .window.active { z-index: 5000 !important; } /* 활성화된 창이 맨 위로 */
-
+        .window.active { z-index: 1000 !important; }
         .title-bar {
-            background: #808080; color: #c0c0c0; padding: 3px 5px;
-            display: flex; justify-content: space-between; align-items: center; font-weight: bold;
+            background: var(--win-dark); color: #dfdfdf; padding: 3px 10px;
+            display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 14px;
         }
         .window.active .title-bar { background: linear-gradient(90deg, #000080, #1084d0); color: white; }
-        .title-bar-controls button { width: 16px; height: 14px; font-size: 9px; padding: 0; background: var(--win-silver); border: 1px solid; border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light); }
-
-        .window-content { flex: 1; background: white; margin: 2px; border: 2px inset var(--win-silver); padding: 15px; overflow: auto; }
+        .title-bar-controls button { width: 16px; height: 14px; font-size: 9px; background: var(--win-silver); border: 1px solid; border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light); }
+        
+        .window-body { flex: 1; padding: 10px; background: white; margin: 2px; border: 2px inset var(--win-silver); overflow-y: auto; color: black; }
 
         /* 태스크바 */
-        .taskbar {
-            position: fixed; bottom: 0; width: 100%; height: 32px; background: var(--win-silver);
-            border-top: 2px solid var(--win-light); display: flex; align-items: center; padding: 2px; z-index: 9999;
-        }
+        .taskbar { position: fixed; bottom: 0; width: 100%; height: 32px; background: var(--win-silver); border-top: 2px solid var(--win-light); display: flex; align-items: center; padding: 2px; z-index: 15000; }
+        .start-btn { display: flex; align-items: center; gap: 5px; padding: 2px 8px; font-weight: bold; border: 2px solid; border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light); }
+        .start-btn.active { border-color: var(--win-dark) var(--win-light) var(--win-light) var(--win-dark); background: #e0e0e0; }
         .task-tabs-container { display: flex; gap: 4px; margin-left: 5px; flex: 1; }
-        .task-tab {
-            width: 150px; height: 24px; background: var(--win-silver); border: 2px solid;
-            border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
-            display: flex; align-items: center; gap: 5px; padding: 0 5px; font-size: 11px;
-        }
+        .task-tab { width: 150px; height: 24px; background: var(--win-silver); border: 2px solid; border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light); display: flex; align-items: center; gap: 5px; padding: 0 5px; font-size: 11px; overflow: hidden; }
         .task-tab.active { border-color: var(--win-dark) var(--win-light) var(--win-light) var(--win-dark); background: #e0e0e0; font-weight: bold; }
+        .status-tray { margin-left: auto; padding: 2px 10px; border: 2px inset var(--win-light); font-size: 12px; }
 
-        /* 노이즈 및 효과 */
-        .noise-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('https://replicate.delivery/pbxt/J6TzJzG3T6f3ZkX6V5f5JzG3T6f3ZkX6V5f5/noise.png'); opacity: 0.05; z-index: 10000; pointer-events: none; }
+        /* 시작 메뉴 & 종료 화면 */
+        #start-menu { display: none; position: fixed; bottom: 32px; left: 2px; width: 200px; background: var(--win-silver); border: 2px solid; border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light); z-index: 16000; }
+        .start-menu-sidebar { background: linear-gradient(to top, #000080, #1084d0); width: 25px; color: white; writing-mode: vertical-rl; transform: rotate(180deg); font-weight: bold; text-align: center; font-size: 14px; padding: 5px; }
+        #shutdown-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 30000; justify-content: center; align-items: center; color: orange; text-align: center; }
     </style>
 </head>
-<body>
+<body id="os-body">
     <div class="noise-overlay"></div>
-    
+    <div class="crt-lines"></div>
+
     <div class="desktop" id="desktop">
-        <div class="icon" onclick="createWindow('My Documents', '여기는 문서 보관함입니다...')">
-            <img src="https://win98icons.alexmeub.com/icons/png/directory_open_file_ed-4.png"><br>Documents
+        <div class="icon" onclick="openTrashWindow()">
+            <img src="https://win98icons.alexmeub.com/icons/png/recycle_bin_empty-0.png">
+            <br>Recycle Bin
         </div>
-        <div class="icon" onclick="createWindow('Recycle Bin', '버려진 파일들이 울고 있습니다.')">
-            <img src="https://win98icons.alexmeub.com/icons/png/recycle_bin_empty-0.png"><br>Recycle Bin
+        
+        <div class="icon" onclick="createWindow('Lableue Archive', '{{ content | escape_js }}')">
+            <img src="https://win98icons.alexmeub.com/icons/png/directory_open_file_ed-4.png">
+            <br>Archive.exe
         </div>
     </div>
 
     <div class="taskbar">
-        <div class="start-btn" style="border: 2px solid; border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light); padding: 2px 8px; font-weight: bold;">Start</div>
+        <div class="start-btn" onclick="toggleStartMenu(event)">
+            <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16"> Start
+        </div>
         <div class="task-tabs-container" id="task-tabs"></div>
-        <div style="border: 2px inset white; padding: 2px 10px; font-size: 12px;" id="clock">00:00</div>
+        <div class="status-tray" id="clock">00:00</div>
     </div>
+
+    <div id="start-menu">
+        <div style="display: flex;">
+            <div class="start-menu-sidebar">Liminal 95</div>
+            <ul style="list-style: none; margin: 0; padding: 2px; flex: 1;">
+                <li style="padding: 5px; cursor: pointer;" onclick="location.reload()"><img src="https://win98icons.alexmeub.com/icons/png/chm-2.png" width="16"> Home</li>
+                <hr>
+                <li style="padding: 5px; cursor: pointer;" onclick="shutDown()"><img src="https://win98icons.alexmeub.com/icons/png/shut_down_normal-0.png" width="16"> Shut Down...</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="shutdown-screen">
+        <div><h1>It is now safe to turn off your computer.</h1><p>Microsoft Windows 95</p></div>
+    </div>
+
+    <audio id="error-sound" src="https://raw.githubusercontent.com/fevrcr/win98-icons/main/audio/chord.mp3" preload="auto"></audio>
 
     <script>
         let windowCount = 0;
         let highestZ = 1000;
 
-        function createWindow(title, content) {
+        // 윈도우 생성 함수
+        function createWindow(title, contentHTML) {
             windowCount++;
             const winId = 'win-' + windowCount;
             
-            // 1. 윈도우 HTML 생성
             const win = document.createElement('div');
             win.className = 'window active';
             win.id = winId;
-            win.style.left = (50 + (windowCount * 20)) + 'px';
-            win.style.top = (50 + (windowCount * 20)) + 'px';
+            win.style.left = (60 + (windowCount * 25)) + 'px';
+            win.style.top = (60 + (windowCount * 25)) + 'px';
             win.style.zIndex = ++highestZ;
 
             win.innerHTML = `
                 <div class="title-bar" onmousedown="focusWindow('${winId}')">
                     <span>${title}</span>
-                    <div class="title-bar-controls">
-                        <button onclick="closeWindow('${winId}')">X</button>
-                    </div>
+                    <div class="title-bar-controls"><button onclick="closeWindow('${winId}')">X</button></div>
                 </div>
-                <div class="window-content">${content}</div>
+                <div class="window-body">${contentHTML}</div>
             `;
             
-            // 드래그 기능 (간소화)
             win.onmousedown = () => focusWindow(winId);
-            
             document.getElementById('desktop').appendChild(win);
 
-            // 2. 태스크바 탭 생성
+            // 태스크바 탭 추가
             const tab = document.createElement('div');
             tab.className = 'task-tab active';
             tab.id = 'tab-' + winId;
-            tab.innerHTML = `<span>${title}</span>`;
+            tab.innerHTML = `<img src="https://win98icons.alexmeub.com/icons/png/msie1-2.png" width="14"> <span>${title}</span>`;
             tab.onclick = () => focusWindow(winId);
             document.getElementById('task-tabs').appendChild(tab);
 
@@ -113,15 +143,12 @@
         }
 
         function focusWindow(id) {
-            // 모든 창과 탭 비활성화
             document.querySelectorAll('.window').forEach(w => w.classList.remove('active'));
             document.querySelectorAll('.task-tab').forEach(t => t.classList.remove('active'));
-
-            // 선택한 창 맨 위로
-            const win = document.getElementById(id);
-            if (win) {
-                win.classList.add('active');
-                win.style.zIndex = ++highestZ;
+            const target = document.getElementById(id);
+            if(target) {
+                target.classList.add('active');
+                target.style.zIndex = ++highestZ;
                 document.getElementById('tab-' + id).classList.add('active');
             }
         }
@@ -131,11 +158,48 @@
             document.getElementById('tab-' + id).remove();
         }
 
-        // 시계 업데이트
+        // 휴지통 전용 (기존 내용 유지)
+        function openTrashWindow() {
+            const trashContent = `
+                <h4 style="color:blue;"><i>* 떠돌이별 Lableue *</i></h4><hr>
+                <p>> E-mail : isijeu66@gmail.com<br>
+                > 하고 싶은 걸 하는 사람.<br>
+                >> 문의는 이메일</p>
+            `;
+            createWindow('Recycle Bin', trashContent);
+        }
+
+        // 시작 메뉴 및 기타 기능
+        function toggleStartMenu(e) {
+            e.stopPropagation();
+            const menu = document.getElementById('start-menu');
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+            document.querySelector('.start-btn').classList.toggle('active');
+        }
+
+        function shutDown() {
+            if(confirm("시스템을 종료하시겠습니까?")) {
+                document.body.classList.add('waiting');
+                setTimeout(() => {
+                    document.getElementById('shutdown-screen').style.display = 'flex';
+                }, 1000);
+            }
+        }
+
+        window.onclick = () => { 
+            document.getElementById('start-menu').style.display = 'none';
+            document.querySelector('.start-btn').classList.remove('active');
+        };
+
         setInterval(() => {
             const n = new Date();
             document.getElementById('clock').innerText = n.getHours().toString().padStart(2,'0') + ":" + n.getMinutes().toString().padStart(2,'0');
         }, 1000);
+
+        // 첫 로드시 메인 아카이브 창 띄우기
+        window.onload = () => {
+            createWindow('C:\\WINDOWS\\SYSTEM32\\LABLEUE_ARCHIVE.EXE', `<h1>{{ page.title }}</h1> {{ content | escape_js }}`);
+        };
     </script>
 </body>
 </html>
